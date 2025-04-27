@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Safe Travel</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Safe Travel</h1>
+  <form id="eventForm">
+    <label for="eventType">Event Type:</label>
+    <select id="eventType">
+      <option value="traffic">Traffic Backup</option>
+      <option value="vehicle">Broken Down Vehicle</option>
+      <option value="police">Police Presence</option>
+      <option value="object">Object in Road</option>
+    </select>
+    <textarea id="eventDescription" placeholder="Describe the event"></textarea>
+    <button type="submit">Submit</button>
+  </form>
+  <div id="mapDiv" style="width: 100%; height: 70vh;"></div>
+  <script src="main.js"></script>
+  <script src="https://js.arcgis.com/4.26/"></script>
+</body>
+</html>

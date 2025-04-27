@@ -94,3 +94,69 @@ app.get("/api/events", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+document.getElementById("eventForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const eventType = document.getElementById("eventType").value;
+    const eventDescription = document.getElementById("eventDescription").value;
+    const latitude = view.center.latitude; // Map center latitude
+    const longitude = view.center.longitude; // Map center longitude
+  
+    try {
+      const response = await fetch("http://localhost:3000/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
+      });
+  
+      if (response.ok) {
+        const event = await response.json();
+        console.log("Event saved:", event);
+        alert("Event reported successfully!");
+        displayEventOnMap(event); // Add the event to the map
+      } else {
+        alert("Error reporting event. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error reporting event:", error.message);
+      alert("Error reporting event. Please try again.");
+    }
+  });
+  async function fetchEvents() {
+    try {
+      const response = await fetch("http://localhost:3000/api/events");
+      const events = await response.json();
+  
+      events.forEach(displayEventOnMap); // Display each event on the map
+    } catch (error) {
+      console.error("Error fetching events:", error.message);
+    }
+  }
+  function displayEventOnMap(event) {
+    const pointGraphic = {
+      geometry: {
+        type: "point",
+        longitude: event.longitude,
+        latitude: event.latitude,
+      },
+      symbol: {
+        type: "simple-marker",
+        color: "red",
+        size: "8px",
+        outline: { color: "white", width: 1 },
+      },
+      attributes: {
+        type: event.type,
+        description: event.description,
+        timestamp: event.timestamp,
+      },
+      popupTemplate: {
+        title: "{type}",
+        content: "{description}<br><b>Timestamp:</b> {timestamp}",
+      },
+    };
+  
+    view.graphics.add(pointGraphic);
+  }
+  
+  // Fetch events on load
+  fetchEvents();

@@ -12,8 +12,8 @@ require([
   view = new MapView({
     container: "mapDiv",
     map: map,
-    center: [-118.80500, 34.02700],
-    zoom: 13
+    center: [-88.7879, 43.7844],
+    zoom: 10
   });
 
   const search = new Search({ view: view });
@@ -63,31 +63,39 @@ async function fetchEvents() {
 
 // Display events on the map
 function displayEventOnMap(event) {
-  const pointGraphic = {
-    geometry: {
-      type: "point",
-      longitude: event.longitude,
-      latitude: event.latitude,
-    },
-    symbol: {
-      type: "simple-marker",
-      color: "red",
-      size: "8px",
-      outline: { color: "white", width: 1 },
-    },
-    attributes: {
-      type: event.type,
-      description: event.description,
-      timestamp: event.timestamp,
-    },
-    popupTemplate: {
-      title: "{type}",
-      content: "{description}<br><b>Timestamp:</b> {timestamp}",
-    },
-  };
-
-  view.graphics.add(pointGraphic);
-}
+    const pointGraphic = {
+      geometry: {
+        type: "point",
+        longitude: event.longitude,
+        latitude: event.latitude,
+      },
+      symbol: {
+        type: "simple-marker",
+        color: "red",
+        size: "8px",
+        outline: { color: "white", width: 1 },
+      },
+      attributes: {
+        type: event.type,
+        description: event.description,
+        timestamp: event.timestamp,
+      },
+      popupTemplate: {
+        title: "{type}",
+        content: "{description}<br><b>Timestamp:</b> {timestamp}",
+      },
+    };
+  
+    // Add the graphic to the map
+    const graphic = view.graphics.add(pointGraphic);
+  
+    // Set a timeout to remove the graphic after 5 minutes (300,000 milliseconds)
+    setTimeout(() => {
+      view.graphics.remove(graphic); // Remove the graphic from the map
+      console.log(`Event removed: ${event.type}`);
+    }, 300000); // 5 minutes
+  }
 
 // Fetch all events on page load
 fetchEvents();
+

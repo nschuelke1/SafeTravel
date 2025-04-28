@@ -89,11 +89,11 @@ function displayEventOnMap(event) {
     // Add the graphic to the map
     const graphic = view.graphics.add(pointGraphic);
   
-    // Set a timeout to remove the graphic after 5 minutes (300,000 milliseconds)
+    // Set a timeout to remove the graphic after 10 minutes (600,000 milliseconds)
     setTimeout(() => {
       view.graphics.remove(graphic); // Remove the graphic from the map
       console.log(`Event removed: ${event.type}`);
-    }, 300000); // 5 minutes
+    }, 600000); // 10 minutes
   }
 
 // Fetch all events on page load

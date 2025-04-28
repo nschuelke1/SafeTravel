@@ -20,143 +20,74 @@ require([
   view.ui.add(search, "top-right");
 });
 
-const pool = require("./db");
-
+// Form submission for event reporting
 document.getElementById("eventForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const eventType = document.getElementById("eventType").value;
   const eventDescription = document.getElementById("eventDescription").value;
-  const latitude = view.center.latitude; // Get latitude from map view center
-  const longitude = view.center.longitude; // Get longitude from map view center
+  const latitude = view.center.latitude; // Map center latitude
+  const longitude = view.center.longitude; // Map center longitude
 
   try {
-    const query = `
-      INSERT INTO events (type, description, latitude, longitude)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *;
-    `;
-    const values = [eventType, eventDescription, latitude, longitude];
-    const result = await pool.query(query, values);
+    const response = await fetch("http://localhost:3000/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
+    });
 
-    console.log("Event saved:", result.rows[0]);
-    alert("Event reported and saved to the database!");
-  } catch (error) {
-    console.error("Error saving event:", error.message);
-    alert("Error saving event. Please try again.");
-  }
-});
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const pool = require("./db"); // PostgreSQL connection
-
-const app = express();
-const PORT = 8000;
-
-// Middleware
-app.use(cors()); // Allows frontend to access the backend
-app.use(bodyParser.json());
-
-// POST: Add new event to the database
-app.post("/api/events", async (req, res) => {
-  const { type, description, latitude, longitude } = req.body;
-
-  try {
-    const query = `
-      INSERT INTO events (type, description, latitude, longitude, timestamp)
-      VALUES ($1, $2, $3, $4, NOW())
-      RETURNING *;
-    `;
-    const values = [type, description, latitude, longitude];
-    const result = await pool.query(query, values);
-
-    res.status(201).json(result.rows[0]); // Return the saved event
-  } catch (error) {
-    console.error("Error saving event:", error.message);
-    res.status(500).json({ error: "Error saving event to database" });
-  }
-});
-
-// GET: Fetch all events from the database
-app.get("/api/events", async (req, res) => {
-  try {
-    const query = "SELECT * FROM events ORDER BY timestamp DESC;";
-    const result = await pool.query(query);
-
-    res.status(200).json(result.rows); // Return all events
-  } catch (error) {
-    console.error("Error fetching events:", error.message);
-    res.status(500).json({ error: "Error fetching events from database" });
-  }
-});
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-document.getElementById("eventForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const eventType = document.getElementById("eventType").value;
-    const eventDescription = document.getElementById("eventDescription").value;
-    const latitude = view.center.latitude; // Map center latitude
-    const longitude = view.center.longitude; // Map center longitude
-  
-    try {
-      const response = await fetch("http://localhost:3000/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
-      });
-  
-      if (response.ok) {
-        const event = await response.json();
-        console.log("Event saved:", event);
-        alert("Event reported successfully!");
-        displayEventOnMap(event); // Add the event to the map
-      } else {
-        alert("Error reporting event. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error reporting event:", error.message);
+    if (response.ok) {
+      const event = await response.json();
+      console.log("Event saved:", event);
+      alert("Event reported successfully!");
+      displayEventOnMap(event); // Add the event to the map
+    } else {
       alert("Error reporting event. Please try again.");
     }
-  });
-  async function fetchEvents() {
-    try {
-      const response = await fetch("http://localhost:3000/api/events");
-      const events = await response.json();
-  
-      events.forEach(displayEventOnMap); // Display each event on the map
-    } catch (error) {
-      console.error("Error fetching events:", error.message);
-    }
+  } catch (error) {
+    console.error("Error reporting event:", error.message);
+    alert("Error reporting event. Please try again.");
   }
-  function displayEventOnMap(event) {
-    const pointGraphic = {
-      geometry: {
-        type: "point",
-        longitude: event.longitude,
-        latitude: event.latitude,
-      },
-      symbol: {
-        type: "simple-marker",
-        color: "red",
-        size: "8px",
-        outline: { color: "white", width: 1 },
-      },
-      attributes: {
-        type: event.type,
-        description: event.description,
-        timestamp: event.timestamp,
-      },
-      popupTemplate: {
-        title: "{type}",
-        content: "{description}<br><b>Timestamp:</b> {timestamp}",
-      },
-    };
-  
-    view.graphics.add(pointGraphic);
+});
+
+// Fetch events from backend
+async function fetchEvents() {
+  try {
+    const response = await fetch("http://localhost:3000/api/events");
+    const events = await response.json();
+
+    events.forEach(displayEventOnMap); // Display each event on the map
+  } catch (error) {
+    console.error("Error fetching events:", error.message);
   }
-  
-  // Fetch events on load
-  fetchEvents();
+}
+
+// Display events on the map
+function displayEventOnMap(event) {
+  const pointGraphic = {
+    geometry: {
+      type: "point",
+      longitude: event.longitude,
+      latitude: event.latitude,
+    },
+    symbol: {
+      type: "simple-marker",
+      color: "red",
+      size: "8px",
+      outline: { color: "white", width: 1 },
+    },
+    attributes: {
+      type: event.type,
+      description: event.description,
+      timestamp: event.timestamp,
+    },
+    popupTemplate: {
+      title: "{type}",
+      content: "{description}<br><b>Timestamp:</b> {timestamp}",
+    },
+  };
+
+  view.graphics.add(pointGraphic);
+}
+
+// Fetch all events on page load
+fetchEvents();

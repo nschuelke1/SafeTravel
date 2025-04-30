@@ -8,7 +8,7 @@ require([
 ], function (esriConfig, Map, MapView, Search) {
   esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurA_2jA8sPPf_DuV7jRLl5PwtnXSU0EiBd11SD4M-Bxw09rmd0l6ZSXQcXdC02UAp2lAmFwzFmnG_WD801TT5ANPE-DaFCqD8m2Ldi20FzvxATwBfGGYHd63tKIw-3X5m0bMryDHHfe22v_GGwBbuVp5A1NKlAPUcd2qw-o9qe15R44wcxYyNCio515nFVnc-WVdUDUMAeJaEPFq_tiEoSHcnVnNn_bXNM5TwVfExnWzlAT1_UTCsPQV0";
 
-  const map = new Map({ basemap: "streets" });
+  const map = new Map({ basemap: "streets-vector" });
   view = new MapView({
     container: "mapDiv",
     map: map,
@@ -25,8 +25,22 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const eventType = document.getElementById("eventType").value;
   const eventDescription = document.getElementById("eventDescription").value;
-  const latitude = view.center.latitude; // Map center latitude
-  const longitude = view.center.longitude; // Map center longitude
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async function (position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+  
+        // Your existing POST request logic goes here
+      },
+      function (error) {
+        console.error("Error obtaining location:", error.message);
+        alert("Unable to fetch precise location. Please enable location services.");
+      }
+    );
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
 
   try {
     const response = await fetch("http://localhost:3000/api/events", {

@@ -48,7 +48,8 @@ body, h1, h2, h3, p, ul, li, form, input, button, select, textarea {
   
   textarea {
     resize: vertical;
-    height: 100px;
+    height: 50px;
+    
   }
   
   button {

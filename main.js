@@ -77,38 +77,42 @@ async function fetchEvents() {
 
 // Display events on the map
 function displayEventOnMap(event) {
-    const pointGraphic = {
-      geometry: {
-        type: "point",
-        longitude: event.longitude,
-        latitude: event.latitude,
-      },
-      symbol: {
-        type: "simple-marker",
-        color: "red",
-        size: "8px",
-        outline: { color: "white", width: 1 },
-      },
-      attributes: {
-        type: event.type,
-        description: event.description,
-        timestamp: event.timestamp,
-      },
-      popupTemplate: {
-        title: "{type}",
-        content: "{description}<br><b>Timestamp:</b> {timestamp}",
-      },
-    };
+  const pointGraphic = {
+    geometry: {
+      type: "point",
+      longitude: event.longitude,
+      latitude: event.latitude,
+    },
+    symbol: {
+      type: "simple-marker",
+      color: "red",
+      size: "8px",
+      outline: { color: "white", width: 1 },
+    },
+    attributes: {
+      type: event.type,
+      description: event.description,
+      timestamp: event.timestamp,
+    },
+    popupTemplate: {
+      title: "{type}",
+      content: "{description}<br><b>Timestamp:</b> {timestamp}",
+    },
+  };
+
+  // Add the graphic to the map
+  const graphic = view.graphics.add(pointGraphic);
+
+  // Ensure graphic is scoped correctly for removal
+  console.log(`Event added: ${event.type}`);
+
+  // Set a timeout to remove the graphic after 20 minutes
+  setTimeout(() => {
+    const success = view.graphics.remove(graphic);
+    console.log(success ? `Event removed: ${event.type}` : "Failed to remove graphic");
+  }, 1200000); // 20 minutes
+}
   
-    // Add the graphic to the map
-    const graphic = view.graphics.add(pointGraphic);
-  
-    // Set a timeout to remove the graphic after 10 minutes (600,000 milliseconds)
-    setTimeout(() => {
-      view.graphics.remove(graphic); // Remove the graphic from the map
-      console.log(`Event removed: ${event.type}`);
-    }, 600000); // 10 minutes
-  }
 
 // Fetch all events on page load
 fetchEvents();

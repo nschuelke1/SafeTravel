@@ -77,18 +77,59 @@ async function fetchEvents() {
 
 // Display events on the map
 function displayEventOnMap(event) {
+  // Define custom symbols for each event type
+  let eventSymbol;
+
+  switch (event.type) {
+    case "traffic":
+      eventSymbol = {
+        type: "simple-marker",
+        color: "orange",
+        size: "10px",
+        outline: { color: "white", width: 1 },
+      };
+      break;
+    case "vehicle":
+      eventSymbol = {
+        type: "simple-marker",
+        color: "blue",
+        size: "10px",
+        outline: { color: "white", width: 1 },
+      };
+      break;
+    case "police":
+      eventSymbol = {
+        type: "simple-marker",
+        color: "red",
+        size: "10px",
+        outline: { color: "white", width: 1 },
+      };
+      break;
+    case "object":
+      eventSymbol = {
+        type: "simple-marker",
+        color: "green",
+        size: "10px",
+        outline: { color: "white", width: 1 },
+      };
+      break;
+    default:
+      eventSymbol = {
+        type: "simple-marker",
+        color: "gray",
+        size: "10px",
+        outline: { color: "white", width: 1 },
+      };
+  }
+
+  // Create the graphic for the event
   const pointGraphic = {
     geometry: {
       type: "point",
       longitude: event.longitude,
       latitude: event.latitude,
     },
-    symbol: {
-      type: "simple-marker",
-      color: "red",
-      size: "8px",
-      outline: { color: "white", width: 1 },
-    },
+    symbol: eventSymbol, // Apply the event-specific symbol here
     attributes: {
       type: event.type,
       description: event.description,
@@ -103,16 +144,12 @@ function displayEventOnMap(event) {
   // Add the graphic to the map
   const graphic = view.graphics.add(pointGraphic);
 
-  // Ensure graphic is scoped correctly for removal
-  console.log(`Event added: ${event.type}`);
-
   // Set a timeout to remove the graphic after 20 minutes
   setTimeout(() => {
-    const success = view.graphics.remove(graphic);
-    console.log(success ? `Event removed: ${event.type}` : "Failed to remove graphic");
+    view.graphics.remove(graphic);
+    console.log(`Event removed: ${event.type}`);
   }, 1200000); // 20 minutes
 }
-  
 
 // Fetch all events on page load
 fetchEvents();

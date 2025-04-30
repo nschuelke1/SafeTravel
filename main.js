@@ -21,17 +21,40 @@ require([
 });
 
 // Form submission for event reporting
+// Form submission for event reporting
 document.getElementById("eventForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+  e.preventDefault(); // Prevent default form submission behavior
+
   const eventType = document.getElementById("eventType").value;
   const eventDescription = document.getElementById("eventDescription").value;
+
+  // Use Geolocation API for precise location
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       async function (position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-  
-        // Your existing POST request logic goes here
+        const latitude = position.coords.latitude; // Retrieve latitude
+        const longitude = position.coords.longitude; // Retrieve longitude
+
+        // POST the event data to the backend
+        try {
+          const response = await fetch("http://localhost:3000/api/events", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
+          });
+
+          if (response.ok) {
+            const event = await response.json();
+            console.log("Event saved:", event);
+            alert("Event reported successfully!");
+            displayEventOnMap(event); // Add the event to the map
+          } else {
+            alert("Error reporting event. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error reporting event:", error.message);
+          alert("Error reporting event. Please try again.");
+        }
       },
       function (error) {
         console.error("Error obtaining location:", error.message);
@@ -41,39 +64,7 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
   } else {
     alert("Geolocation is not supported by your browser.");
   }
-
-  try {
-    const response = await fetch("http://localhost:3000/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
-    });
-
-    if (response.ok) {
-      const event = await response.json();
-      console.log("Event saved:", event);
-      alert("Event reported successfully!");
-      displayEventOnMap(event); // Add the event to the map
-    } else {
-      alert("Error reporting event. Please try again.");
-    }
-  } catch (error) {
-    console.error("Error reporting event:", error.message);
-    alert("Error reporting event. Please try again.");
-  }
 });
-
-// Fetch events from backend
-async function fetchEvents() {
-  try {
-    const response = await fetch("http://localhost:3000/api/events");
-    const events = await response.json();
-
-    events.forEach(displayEventOnMap); // Display each event on the map
-  } catch (error) {
-    console.error("Error fetching events:", error.message);
-  }
-}
 
 // Display events on the map
 function displayEventOnMap(event) {

@@ -4,11 +4,19 @@ const bodyParser = require("body-parser");
 const pool = require("./db"); // PostgreSQL connection module
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // Use Heroku's dynamic port
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+// Serve static files from the "public" directory
+app.use(express.static("public"));
+
+// Serve the homepage
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
 
 // POST: Add new event
 app.post("/api/events", async (req, res) => {

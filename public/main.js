@@ -20,10 +20,10 @@ require([
   view.ui.add(search, "top-right");
 });
 
-// ✅ Fetch events via proxy
+//  Fetch events via proxy
 async function fetchEvents() {
   try {
-    const response = await fetch("/api/events"); // ✅ Uses the proxy instead of direct Heroku URL
+    const response = await fetch("/api/events"); //  Uses the proxy instead of direct Heroku URL
 
     if (!response.ok) throw new Error("Failed to fetch events");
 
@@ -34,7 +34,7 @@ async function fetchEvents() {
   }
 }
 
-// ✅ Form submission for event reporting (Now uses proxy)
+//  Form submission for event reporting (Now uses proxy)
 document.getElementById("eventForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -48,7 +48,7 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
         const longitude = position.coords.longitude;
 
         try {
-          const response = await fetch("/api/events", { // ✅ Uses the proxy
+          const response = await fetch("/api/events", { //  Uses the proxy
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
@@ -77,7 +77,7 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
   }
 });
 
-// ✅ Display events on the map
+//  Display events on the map
 function displayEventOnMap(event) {
   let eventSymbol;
 
@@ -107,12 +107,12 @@ function displayEventOnMap(event) {
 
   const graphic = view.graphics.add(pointGraphic);
 
-  // ✅ Automatically remove event after 20 minutes
+  //  Automatically remove event after 20 minutes
   setTimeout(() => {
     view.graphics.remove(graphic);
     console.log(`Event removed: ${event.type}`);
   }, 1200000);
 }
 
-// ✅ Fetch all events on page load
+//  Fetch all events on page load
 fetchEvents();

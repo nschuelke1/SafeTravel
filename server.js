@@ -17,7 +17,12 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 //  Explicitly Handle Preflight Requests for `/api/events`
-app.options("/api/events", cors(corsOptions));
+app.options("/api/events", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "https://safetravel-61862bdd5b99.herokuapp.com");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.sendStatus(204); // ✅ Proper response for preflight requests
+});
 
 //  Debugging - Log requests for troubleshooting
 app.use((req, res, next) => {

@@ -24,14 +24,8 @@ app.use("/api", createProxyMiddleware({
   secure: false,
   logLevel: "debug", //  Logs proxy activity for debugging
   pathRewrite: { "^/api": "/api" }, //  Ensures requests correctly map to backend
-  onProxyReq: (proxyReq, req, res) => {
+  onProxyReq: (proxyReq, req) => {
     console.log(`Proxying request: ${req.method} ${req.url}`);
-  },
-  onProxyRes: (proxyRes) => {
-    proxyRes.headers["Access-Control-Allow-Origin"] = "*";
-    proxyRes.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS";
-    proxyRes.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
-    proxyRes.headers["Access-Control-Allow-Credentials"] = "true";
   }
 }));
 

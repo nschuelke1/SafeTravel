@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { createProxyMiddleware } = require("http-proxy-middleware"); // Proxy middleware
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const pool = require("./db"); // PostgreSQL connection module
 
 const app = express();
@@ -23,7 +23,10 @@ app.use("/api", createProxyMiddleware({
   changeOrigin: true,
   secure: false,
   logLevel: "debug", //  Logs proxy activity for debugging
-  pathRewrite: { "^/api": "" }, //  Ensures requests map correctly to backend
+  pathRewrite: { "^/api": "/api" }, //  Ensures requests correctly map to backend
+  onProxyReq: (proxyReq, req, res) => {
+    console.log(`Proxying request: ${req.method} ${req.url}`);
+  },
   onProxyRes: (proxyRes) => {
     proxyRes.headers["Access-Control-Allow-Origin"] = "*";
     proxyRes.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS";

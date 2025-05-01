@@ -16,7 +16,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-//  Explicitly Handle Preflight Requests for /api/events
+//  Explicitly Handle Preflight Requests for `/api/events`
 app.options("/api/events", cors(corsOptions));
 
 //  Debugging - Log requests for troubleshooting
@@ -62,7 +62,7 @@ app.get("/api/events", async (req, res) => {
   }
 });
 
-//  Start server
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

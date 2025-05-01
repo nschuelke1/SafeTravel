@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 const corsOptions = {
   origin: "https://safetravel-61862bdd5b99.herokuapp.com", 
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true, // Enable cookies/session handling if needed
   optionsSuccessStatus: 200 // Handle preflight requests smoothly
 
@@ -19,6 +19,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("/api/events", cors(corsOptions));
 app.use(express.json());
+
+// Debugging - Log requests for troubleshooting
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  console.log("Headers:", req.headers);
+  next();
+});
+
 
 
 // Serve static files from the "public" directory

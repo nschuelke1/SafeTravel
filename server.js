@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { createProxyMiddleware } = require("http-proxy-middleware"); // Proxy middleware
 const pool = require("./db"); // PostgreSQL connection module
 
 const app = express();
@@ -16,16 +17,29 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+//  Reverse Proxy Setup to Bypass CORS Issues
+app.use("/api", createProxyMiddleware({
+  target: "https://safetravel-61862bdd5b99.herokuapp.com",
+  changeOrigin: true,
+  secure: false,
+  onProxyRes: (proxyRes) => {
+    proxyRes.headers["Access-Control-Allow-Origin"] = "*"; // Ensures safe CORS handling
+    proxyRes.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS";
+    proxyRes.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
+    proxyRes.headers["Access-Control-Allow-Credentials"] = "true";
+  }
+}));
+
 //  Explicitly Handle Preflight Requests for `/api/events`
 app.options("/api/events", (req, res) => {
-  console.log("Received OPTIONS request for /api/events"); // Debugging log
+  console.log("Received OPTIONS request for /api/events");
 
   res.setHeader("Access-Control-Allow-Origin", "https://safetravel-61862bdd5b99.herokuapp.com");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
 
-  res.sendStatus(204); // ✅ Proper response for preflight requests
+  res.sendStatus(204);
 });
 
 //  Debugging - Log Incoming Requests

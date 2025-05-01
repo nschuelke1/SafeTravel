@@ -10,11 +10,16 @@ const PORT = process.env.PORT || 3000;
 const corsOptions = {
   origin: "https://safetravel-61862bdd5b99.herokuapp.com", 
   methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"]
+  allowedHeaders: ["Content-Type"],
+  credentials: true, // Enable cookies/session handling if needed
+  optionsSuccessStatus: 200 // Handle preflight requests smoothly
+
 };
 
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
+app.use(express.static("public"));
 
 // Serve static files from the "public" directory
 app.use(express.static("public"));

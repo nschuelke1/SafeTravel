@@ -17,12 +17,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-//  Reverse Proxy Setup to Bypass CORS Issues (Placed BEFORE routes)
+//  Reverse Proxy Setup (Placed BEFORE routes)
 app.use("/api", createProxyMiddleware({
   target: "https://safetravel-61862bdd5b99.herokuapp.com",
   changeOrigin: true,
   secure: false,
   logLevel: "debug", //  Logs proxy activity for debugging
+  pathRewrite: { "^/api": "" }, //  Ensures requests map correctly to backend
   onProxyRes: (proxyRes) => {
     proxyRes.headers["Access-Control-Allow-Origin"] = "*";
     proxyRes.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS";

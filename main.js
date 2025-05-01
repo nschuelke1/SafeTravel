@@ -37,7 +37,7 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
 
         // POST the event data to the backend
         try {
-          const response = await fetch("http://localhost:3000/api/events", {
+          const response = await fetch("https://safetravel.herokuapp.com/api/events", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),

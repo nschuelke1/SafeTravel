@@ -1,0 +1,3 @@
+machine git.heroku.com
+login <HRKU-AANYmeRVqu6Dim9J5SVxvS8z4HbzkRSZW3V438TiVqTw_____wrY8jso0jH0>
+password

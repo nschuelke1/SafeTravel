@@ -1,11 +1,16 @@
 const { Pool } = require("pg");
-
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "safetravel",
-  password: "admin",
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Heroku's secure connection
+  },
 });
 
-module.exports = pool;
+// Example query to test connection
+pool.query("SELECT NOW()", (err, res) => {
+  if (err) {
+    console.error("Database connection error:", err);
+  } else {
+    console.log("Database connected:", res.rows);
+  }
+});

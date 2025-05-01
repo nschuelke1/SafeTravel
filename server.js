@@ -5,12 +5,15 @@ const pool = require("./db"); // PostgreSQL connection module
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
 // Middleware
-app.use(cors({ origin: "https://safetravel.herokuapp.com" }));
+const corsOptions = {
+  origin: "https://safetravel.herokuapp.com", // Allow requests from your frontend
+  methods: ["GET", "POST"], // Explicitly allow GET and POST requests
+  allowedHeaders: ["Content-Type"] // Ensure headers are permitted
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // Serve static files from the "public" directory

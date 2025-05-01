@@ -8,9 +8,9 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 const corsOptions = {
-  origin: "https://safetravel.herokuapp.com", // Allow requests from your frontend
-  methods: ["GET", "POST"], // Explicitly allow GET and POST requests
-  allowedHeaders: ["Content-Type"] // Ensure headers are permitted
+  origin: "*", // Allows requests from any domain (change to specific origin if needed)
+  methods: ["GET", "POST"], // Ensures GET & POST requests are permitted
+  allowedHeaders: ["Content-Type", "Authorization"] // Explicitly allow headers
 };
 
 app.use(cors(corsOptions));

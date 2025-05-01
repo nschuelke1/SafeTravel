@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 const corsOptions = {
-  origin: "https://safetravel-61862bdd5b99.herokuapp.com", // Adjusted to match your frontend URL
+  origin: "https://safetravel-61862bdd5b99.herokuapp.com/api/events", // Adjusted to match your frontend URL
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"]
 };

@@ -14,7 +14,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Serve static files from the "public" directory
 app.use(express.static("public"));

@@ -20,6 +20,21 @@ require([
   view.ui.add(search, "top-right");
 });
 
+//Fetch events from the backend and display them on the map
+  async function fetchEvents() {
+    try {
+      const response = await fetch("https://safetravel.herokuapp.com/api/events");
+
+      if (!response.ok) throw new Error("Failed to fetch events");
+
+      const events = await response.json();
+      events.forEach(displayEventOnMap); // Ensure displayEventOnMap() is defined
+
+    } catch (error) {
+      console.error("Error fetching events:", error.message);
+    }
+  }
+
 // Form submission for event reporting
 // Form submission for event reporting
 document.getElementById("eventForm").addEventListener("submit", async (e) => {

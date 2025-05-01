@@ -1,10 +1,13 @@
 const { Pool } = require("pg");
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL, // Use Heroku's DATABASE_URL
   ssl: {
-    rejectUnauthorized: false, // Required for Heroku's secure connection
+    rejectUnauthorized: false, // Accept Heroku's SSL settings
   },
 });
+
+module.exports = pool;
 
 // Example query to test connection
 pool.query("SELECT NOW()", (err, res) => {

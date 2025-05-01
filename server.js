@@ -4,7 +4,10 @@ const bodyParser = require("body-parser");
 const pool = require("./db"); // PostgreSQL connection module
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Use Heroku's dynamic port
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 // Middleware
 app.use(cors());

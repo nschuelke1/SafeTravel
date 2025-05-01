@@ -10,7 +10,7 @@ app.listen(PORT, () => {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "https://safetravel.herokuapp.com" }));
 app.use(bodyParser.json());
 
 // Serve static files from the "public" directory

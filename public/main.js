@@ -20,39 +20,35 @@ require([
   view.ui.add(search, "top-right");
 });
 
-//Fetch events from the backend and display them on the map
-  async function fetchEvents() {
-    try {
-      const response = await fetch("https://safetravel-61862bdd5b99.herokuapp.com/api/events");
+// ✅ Fetch events via proxy
+async function fetchEvents() {
+  try {
+    const response = await fetch("/api/events"); // ✅ Uses the proxy instead of direct Heroku URL
 
-      if (!response.ok) throw new Error("Failed to fetch events");
+    if (!response.ok) throw new Error("Failed to fetch events");
 
-      const events = await response.json();
-      events.forEach(displayEventOnMap); // Ensure displayEventOnMap() is defined
-
-    } catch (error) {
-      console.error("Error fetching events:", error.message);
-    }
+    const events = await response.json();
+    events.forEach(displayEventOnMap);
+  } catch (error) {
+    console.error("Error fetching events:", error.message);
   }
+}
 
-// Form submission for event reporting
-// Form submission for event reporting
+// ✅ Form submission for event reporting (Now uses proxy)
 document.getElementById("eventForm").addEventListener("submit", async (e) => {
-  e.preventDefault(); // Prevent default form submission behavior
+  e.preventDefault();
 
   const eventType = document.getElementById("eventType").value;
   const eventDescription = document.getElementById("eventDescription").value;
 
-  // Use Geolocation API for precise location
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       async function (position) {
-        const latitude = position.coords.latitude; // Retrieve latitude
-        const longitude = position.coords.longitude; // Retrieve longitude
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
 
-        // POST the event data to the backend
         try {
-          const response = await fetch("https://safetravel.herokuapp.com/api/events", {
+          const response = await fetch("/api/events", { // ✅ Uses the proxy
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
@@ -62,7 +58,7 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
             const event = await response.json();
             console.log("Event saved:", event);
             alert("Event reported successfully!");
-            displayEventOnMap(event); // Add the event to the map
+            displayEventOnMap(event);
           } else {
             alert("Error reporting event. Please try again.");
           }
@@ -81,82 +77,42 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
   }
 });
 
-// Display events on the map
+// ✅ Display events on the map
 function displayEventOnMap(event) {
-  // Define custom symbols for each event type
   let eventSymbol;
 
   switch (event.type) {
     case "traffic":
-      eventSymbol = {
-        type: "simple-marker",
-        color: "orange",
-        size: "10px",
-        outline: { color: "white", width: 1 },
-      };
+      eventSymbol = { type: "simple-marker", color: "orange", size: "10px", outline: { color: "white", width: 1 } };
       break;
     case "vehicle":
-      eventSymbol = {
-        type: "simple-marker",
-        color: "blue",
-        size: "10px",
-        outline: { color: "white", width: 1 },
-      };
+      eventSymbol = { type: "simple-marker", color: "blue", size: "10px", outline: { color: "white", width: 1 } };
       break;
     case "police":
-      eventSymbol = {
-        type: "simple-marker",
-        color: "red",
-        size: "10px",
-        outline: { color: "white", width: 1 },
-      };
+      eventSymbol = { type: "simple-marker", color: "red", size: "10px", outline: { color: "white", width: 1 } };
       break;
     case "object":
-      eventSymbol = {
-        type: "simple-marker",
-        color: "green",
-        size: "10px",
-        outline: { color: "white", width: 1 },
-      };
+      eventSymbol = { type: "simple-marker", color: "green", size: "10px", outline: { color: "white", width: 1 } };
       break;
     default:
-      eventSymbol = {
-        type: "simple-marker",
-        color: "gray",
-        size: "10px",
-        outline: { color: "white", width: 1 },
-      };
+      eventSymbol = { type: "simple-marker", color: "gray", size: "10px", outline: { color: "white", width: 1 } };
   }
 
-  // Create the graphic for the event
   const pointGraphic = {
-    geometry: {
-      type: "point",
-      longitude: event.longitude,
-      latitude: event.latitude,
-    },
-    symbol: eventSymbol, // Apply the event-specific symbol here
-    attributes: {
-      type: event.type,
-      description: event.description,
-      timestamp: event.timestamp,
-    },
-    popupTemplate: {
-      title: "{type}",
-      content: "{description}<br><b>Timestamp:</b> {timestamp}",
-    },
+    geometry: { type: "point", longitude: event.longitude, latitude: event.latitude },
+    symbol: eventSymbol,
+    attributes: { type: event.type, description: event.description, timestamp: event.timestamp },
+    popupTemplate: { title: "{type}", content: "{description}<br><b>Timestamp:</b> {timestamp}" },
   };
 
-  // Add the graphic to the map
   const graphic = view.graphics.add(pointGraphic);
 
-  // Set a timeout to remove the graphic after 20 minutes
+  // ✅ Automatically remove event after 20 minutes
   setTimeout(() => {
     view.graphics.remove(graphic);
     console.log(`Event removed: ${event.type}`);
-  }, 1200000); // 20 minutes
+  }, 1200000);
 }
 
-// Fetch all events on page load
+// ✅ Fetch all events on page load
 fetchEvents();
-

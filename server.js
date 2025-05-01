@@ -5,7 +5,7 @@ const pool = require("./db"); // PostgreSQL connection module
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-//  Apply Global CORS Middleware
+//  Apply Global CORS Middleware for ALL Requests
 const corsOptions = {
   origin: "https://safetravel-61862bdd5b99.herokuapp.com",
   methods: ["GET", "POST", "OPTIONS"],
@@ -18,22 +18,24 @@ app.use(express.json());
 
 //  Explicitly Handle Preflight Requests for `/api/events`
 app.options("/api/events", (req, res) => {
-  console.log("Received OPTIONS request for /api/events");
-  // Set CORS headers for preflight request
-  res.header("Access-Control-Allow-Origin", "https://safetravel-61862bdd5b99.herokuapp.com");
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  console.log("Received OPTIONS request for /api/events"); // Debugging log
+
+  res.setHeader("Access-Control-Allow-Origin", "https://safetravel-61862bdd5b99.herokuapp.com");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
   res.sendStatus(204); // ✅ Proper response for preflight requests
 });
 
-//  Debugging - Log requests for troubleshooting
+//  Debugging - Log Incoming Requests
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   console.log("Headers:", req.headers);
   next();
 });
 
-//  Serve static files
+//  Serve Static Files
 app.use(express.static("public"));
 
 //  Routes
@@ -69,7 +71,7 @@ app.get("/api/events", async (req, res) => {
   }
 });
 
-// Start server
+//  Start Server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

@@ -39,8 +39,11 @@ app.get("/", (req, res) => {
 
 // POST: Add new event
 app.post("/api/events", async (req, res) => {
-  const { type, description, latitude, longitude } = req.body;
+  res.setHeader("Access-Control-Allow-Origin", "https://safetravel-61862bdd5b99.herokuapp.com"); // ✅ Explicitly allow your frontend
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // ✅ Allow necessary methods
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization"); // ✅ Ensure headers are allowed
 
+  const { type, description, latitude, longitude } = req.body;
   try {
     const query = `
       INSERT INTO events (type, description, latitude, longitude, timestamp)
@@ -49,7 +52,6 @@ app.post("/api/events", async (req, res) => {
     `;
     const values = [type, description, latitude, longitude];
     const result = await pool.query(query, values);
-
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error("Error saving event:", error.message);
@@ -57,19 +59,20 @@ app.post("/api/events", async (req, res) => {
   }
 });
 
-// GET: Retrieve events
 app.get("/api/events", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://safetravel-61862bdd5b99.herokuapp.com"); // ✅ Ensure frontend access
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
   try {
     const query = "SELECT * FROM events ORDER BY timestamp DESC;";
     const result = await pool.query(query);
-
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error fetching events:", error.message);
     res.status(500).json({ error: "Database error" });
   }
 });
-
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

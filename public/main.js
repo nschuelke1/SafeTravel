@@ -23,7 +23,7 @@ require([
 //Fetch events from the backend and display them on the map
   async function fetchEvents() {
     try {
-      const response = await fetch("https://safetravel.herokuapp.com/api/events");
+      const response = await fetch("https://safetravel-61862bdd5b99.herokuapp.com");
 
       if (!response.ok) throw new Error("Failed to fetch events");
 

@@ -58,6 +58,9 @@ app.get("/", (req, res) => {
 
 app.post("/api/events", async (req, res) => {
   const { type, description, latitude, longitude } = req.body;
+  
+  console.log("📌 Received Event Data:", { type, description, latitude, longitude });
+
   try {
     const query = `
       INSERT INTO events (type, description, latitude, longitude, timestamp)
@@ -65,11 +68,15 @@ app.post("/api/events", async (req, res) => {
       RETURNING *;
     `;
     const values = [type, description, latitude, longitude];
+
+    console.log("🔍 Running Database Query...");
     const result = await pool.query(query, values);
+    
+    console.log("Event Saved:", result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error("Error saving event:", error.message);
-    res.status(500).json({ error: "Database error" });
+    console.error("🔥 Error saving event:", error.message);
+    res.status(500).json({ error: "Database error", details: error.message });
   }
 });
 

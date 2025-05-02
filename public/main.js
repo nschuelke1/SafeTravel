@@ -6,7 +6,7 @@ require([
   "esri/views/MapView",
   "esri/widgets/Search"
 ], function (esriConfig, Map, MapView, Search) {
-  esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurA_2jA8sPPf_DuV7jRLl5PwtnXSU0EiBd11SD4M-Bxw09rmd0l6ZSXQcXdC02UAp2lAmFwzFmnG_WD801TT5ANPE-DaFCqD8m2Ldi20FzvxATwBfGGYHd63tKIw-3X5m0bMryDHHfe22v_GGwBbuVp5A1NKlAPUcd2qw-o9qe15R44wcxYyNCio515nFVnc-WVdUDUMAeJaEPFq_tiEoSHcnVnNn_bXNM5TwVfExnWzlAT1_UTCsPQV0";
+  esriConfig.apiKey = "YOUR_API_KEY";
 
   const map = new Map({ basemap: "streets-vector" });
   view = new MapView({
@@ -18,13 +18,19 @@ require([
 
   const search = new Search({ view: view });
   view.ui.add(search, "top-right");
+
+  //  Listen for clicks on the map
+  view.on("click", (event) => {
+    const { latitude, longitude } = event.mapPoint;
+    console.log(`Clicked location: Lat ${latitude}, Lon ${longitude}`);
+    openEventForm(latitude, longitude);
+  });
 });
 
-//  Fetch events via proxy
+//  Fetch events from the backend
 async function fetchEvents() {
   try {
-    const response = await fetch("/api/events"); //  Uses the proxy instead of direct Heroku URL
-
+    const response = await fetch("/api/events");
     if (!response.ok) throw new Error("Failed to fetch events");
 
     const events = await response.json();
@@ -34,46 +40,40 @@ async function fetchEvents() {
   }
 }
 
-//  Form submission for event reporting (Now uses proxy)
+//  Show event form for clicked locations
+function openEventForm(lat, lon) {
+  document.getElementById("latitude").value = lat;
+  document.getElementById("longitude").value = lon;
+  document.getElementById("eventForm").style.display = "block";
+}
+
+//  Handle form submission
 document.getElementById("eventForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const eventType = document.getElementById("eventType").value;
   const eventDescription = document.getElementById("eventDescription").value;
+  const latitude = document.getElementById("latitude").value;
+  const longitude = document.getElementById("longitude").value;
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async function (position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
+  try {
+    const response = await fetch("/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
+    });
 
-        try {
-          const response = await fetch("/api/events", { //  Uses the proxy
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ type: eventType, description: eventDescription, latitude, longitude }),
-          });
-
-          if (response.ok) {
-            const event = await response.json();
-            console.log("Event saved:", event);
-            alert("Event reported successfully!");
-            displayEventOnMap(event);
-          } else {
-            alert("Error reporting event. Please try again.");
-          }
-        } catch (error) {
-          console.error("Error reporting event:", error.message);
-          alert("Error reporting event. Please try again.");
-        }
-      },
-      function (error) {
-        console.error("Error obtaining location:", error.message);
-        alert("Unable to fetch precise location. Please enable location services.");
-      }
-    );
-  } else {
-    alert("Geolocation is not supported by your browser.");
+    if (response.ok) {
+      const event = await response.json();
+      console.log("Event saved:", event);
+      alert("Event reported successfully!");
+      displayEventOnMap(event);
+    } else {
+      alert("Error reporting event.");
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+    alert("Network error.");
   }
 });
 

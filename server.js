@@ -23,7 +23,7 @@ app.use("/api", createProxyMiddleware({
   changeOrigin: true,
   secure: false,
   logLevel: "debug", //  Logs proxy activity for debugging
-  pathRewrite: { "^/api": "/api" }, //  Ensures requests correctly map to backend
+ 
   onProxyReq: (proxyReq, req) => {
     console.log(`Proxying request: ${req.method} ${req.url}`);
   }

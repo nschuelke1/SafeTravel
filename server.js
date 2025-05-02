@@ -1,11 +1,12 @@
 const express = require("express");
 const cors = require("cors");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const pool = require("./db"); // PostgreSQL connection module
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Apply Global CORS Middleware for ALL Requests
+//  Apply Global CORS Middleware for ALL Requests
 const corsOptions = {
   origin: "https://safetravel-61862bdd5b99.herokuapp.com",
   methods: ["GET", "POST", "OPTIONS"],
@@ -16,7 +17,19 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// ✅ Explicitly Handle Preflight Requests for `/api/events`
+//  Reverse Proxy Setup (Placed BEFORE routes)
+//app.use("/api", createProxyMiddleware({
+ // target: "https://safetravel-61862bdd5b99.herokuapp.com",
+  //changeOrigin: true,
+ // secure: false,
+ // logLevel: "debug", //  Logs proxy activity for debugging
+ 
+  //onProxyReq: (proxyReq, req) => {
+    //console.log(`Proxying request: ${req.method} ${req.url}`);
+ // }
+//}));
+
+//  Explicitly Handle Preflight Requests for `/api/events`
 app.options("/api/events", (req, res) => {
   console.log("Received OPTIONS request for /api/events");
 
@@ -28,24 +41,19 @@ app.options("/api/events", (req, res) => {
   res.sendStatus(204);
 });
 
-// ✅ Debugging - Log Incoming Requests
+//  Debugging - Log Incoming Requests
 app.use((req, res, next) => {
-  console.log(`🛠 Incoming request: ${req.method} ${req.url}`);
+  console.log(`Incoming request: ${req.method} ${req.url}`);
   console.log("Headers:", req.headers);
   next();
 });
 
-// ✅ API Routes
-app.get("/api/events", async (req, res) => {
-  console.log("✅ `/api/events` route hit!");
-  try {
-    const query = "SELECT * FROM events ORDER BY timestamp DESC;";
-    const result = await pool.query(query);
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error("🔥 Error fetching events:", error.message);
-    res.status(500).json({ error: "Database error" });
-  }
+//  Serve Static Files
+app.use(express.static("public"));
+
+//  Routes
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 app.post("/api/events", async (req, res) => {
@@ -60,33 +68,29 @@ app.post("/api/events", async (req, res) => {
     const result = await pool.query(query, values);
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error("🔥 Error saving event:", error.message);
+    console.error("Error saving event:", error.message);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-// ✅ Serve Static Files
-app.use(express.static("public"));
-
-// ✅ Home Route
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
+app.use((req, res, next) => {
+  console.log(`Received request: ${req.method} ${req.url}`);
+  next();
 });
 
-// ✅ Debugging: Log All Active Routes
-app._router.stack.forEach((middleware) => {
-  if (middleware.route) {
-    console.log(`🛠 Route registered: ${middleware.route.path}`);
-  } else if (middleware.name === "router") {
-    middleware.handle.stack.forEach((handler) => {
-      if (handler.route) {
-        console.log(`🛠 Route registered: ${handler.route.path}`);
-      }
-    });
+app.get("/api/events", async (req, res, next) => {
+  console.log("✅ `/api/events` route hit!");
+  try {
+    const query = "SELECT * FROM events ORDER BY timestamp DESC;";
+    const result = await pool.query(query);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("🔥 Error fetching events:", error.message);
+    res.status(500).json({ error: "Database error" });
   }
 });
 
-// ✅ Start Server
+//  Start Server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

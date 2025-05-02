@@ -73,13 +73,19 @@ app.post("/api/events", async (req, res) => {
   }
 });
 
-app.get("/api/events", async (req, res) => {
+app.use((req, res, next) => {
+  console.log(`Received request: ${req.method} ${req.url}`);
+  next();
+});
+
+app.get("/api/events", async (req, res, next) => {
+  console.log("✅ `/api/events` route hit!");
   try {
     const query = "SELECT * FROM events ORDER BY timestamp DESC;";
     const result = await pool.query(query);
     res.status(200).json(result.rows);
   } catch (error) {
-    console.error("Error fetching events:", error.message);
+    console.error("🔥 Error fetching events:", error.message);
     res.status(500).json({ error: "Database error" });
   }
 });

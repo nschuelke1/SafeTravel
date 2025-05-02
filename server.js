@@ -18,16 +18,16 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 //  Reverse Proxy Setup (Placed BEFORE routes)
-app.use("/api", createProxyMiddleware({
-  target: "https://safetravel-61862bdd5b99.herokuapp.com",
-  changeOrigin: true,
-  secure: false,
-  logLevel: "debug", //  Logs proxy activity for debugging
+//app.use("/api", createProxyMiddleware({
+ // target: "https://safetravel-61862bdd5b99.herokuapp.com",
+  //changeOrigin: true,
+ // secure: false,
+ // logLevel: "debug", //  Logs proxy activity for debugging
  
-  onProxyReq: (proxyReq, req) => {
-    console.log(`Proxying request: ${req.method} ${req.url}`);
-  }
-}));
+  //onProxyReq: (proxyReq, req) => {
+    //console.log(`Proxying request: ${req.method} ${req.url}`);
+ // }
+//}));
 
 //  Explicitly Handle Preflight Requests for `/api/events`
 app.options("/api/events", (req, res) => {

@@ -56,6 +56,15 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
   const latitude = document.getElementById("latitude").value;
   const longitude = document.getElementById("longitude").value;
 
+  console.log("📌 Submitting Event Data:", { eventType, eventDescription, latitude, longitude });
+
+  // ✅ Ensure latitude & longitude are valid
+  if (!latitude || !longitude || latitude === "" || longitude === "") {
+    console.error("🚨 Latitude and Longitude are missing or invalid!");
+    alert("Error: Latitude and Longitude are required.");
+    return;
+  }
+
   try {
     const response = await fetch("/api/events", {
       method: "POST",
@@ -65,14 +74,14 @@ document.getElementById("eventForm").addEventListener("submit", async (e) => {
 
     if (response.ok) {
       const event = await response.json();
-      console.log("Event saved:", event);
+      console.log("✅ Event saved:", event);
       alert("Event reported successfully!");
       displayEventOnMap(event);
     } else {
       alert("Error reporting event.");
     }
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error("🔥 Error:", error.message);
     alert("Network error.");
   }
 });

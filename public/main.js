@@ -6,7 +6,7 @@ require([
   "esri/views/MapView",
   "esri/widgets/Search"
 ], function (esriConfig, Map, MapView, Search) {
-  esriConfig.apiKey = "YOUR_API_KEY";
+  esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurA_2jA8sPPf_DuV7jRLl5PwtnXSU0EiBd11SD4M-Bxw09rmd0l6ZSXQcXdC02UAp2lAmFwzFmnG_WD801TT5ANPE-DaFCqD8m2Ldi20FzvxATwBfGGYHd63tKIw-3X5m0bMryDHHfe22v_GGwBbuVp5A1NKlAPUcd2qw-o9qe15R44wcxYyNCio515nFVnc-WVdUDUMAeJaEPFq_tiEoSHcnVnNn_bXNM5TwVfExnWzlAT1_UTCsPQV0";
 
   const map = new Map({ basemap: "streets-vector" });
   view = new MapView({

@@ -8,23 +8,26 @@
 
 <body>
   <h1>Safe Travel</h1>
-  <form id="eventForm">
-    <label for="eventType">Event Type:</label>
-    <select id="eventType">
-      <option value="traffic">Traffic Backup</option>
-      <option value="vehicle">Broken Down Vehicle</option>
-      <option value="police">Police Presence</option>
-      <option value="object">Object in Road</option>
-    </select>
-    <textarea id="eventDescription" placeholder="Describe the event"></textarea>
+  <div>
+    <form id="eventForm">
+      <label for="eventType">Event Type:</label>
+      <select id="eventType">
+        <option value="traffic">Traffic Backup</option>
+        <option value="vehicle">Broken Down Vehicle</option>
+        <option value="police">Police Presence</option>
+        <option value="object">Object in Road</option>
+      </select>
+      <textarea id="eventDescription" placeholder="Describe the event"></textarea>
 
-    <!-- Hidden inputs for latitude/longitude to ensure form access -->
-    <input type="hidden" id="latitude">
-    <input type="hidden" id="longitude">
+      <!-- Hidden inputs for latitude/longitude to ensure form access -->
+      <input type="hidden" id="latitude">
+      <input type="hidden" id="longitude">
 
-    <button type="submit">Submit</button>
-  </form>
+      <button type="submit">Submit</button>
+    </form>
+  <div>
 
+ 
   <div id="splashScreen">
   <div id="appDescription">
     <p>

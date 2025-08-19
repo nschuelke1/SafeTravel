@@ -25,18 +25,37 @@
     <button type="submit">Submit</button>
   </form>
 
-  <div id="appDescription" style="text-align: center; margin-bottom: 20px;">
+  <div id="splashScreen">
+  <div id="appDescription">
     <p>
       Welcome to <b>Safe Travel</b>, your go-to tool for reporting and viewing road hazards in real-time.
-      Help fellow travelers by submitting incidents like traffic backups, police presence, broken-down vehicles, or objects in the road. Stay safe and informed! Your incident will disappear after 20 minutes, ensuring the map remains current.
+      Help fellow travelers by submitting incidents like traffic backups, police presence, broken-down vehicles, or objects in the road.
+      Stay safe and informed! Your incident will disappear after 20 minutes, ensuring the map remains current.
     </p>
+    <button id="closeSplash">Enter Map</button>
   </div>
+</div>
 
   <div id="mapDiv" style="width: 100%; height: 70vh;"></div>
+
+    <div id="legend">
+    <span style="color: orange;">● Traffic</span>
+    <span style="color: blue;">● Vehicle</span>
+    <span style="color: red;">● Police</span>
+    <span style="color: green;">● Object</span>
+  </div>
+
 
   <script src="https://js.arcgis.com/4.26/"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
   <script src="main.js"></script>
+  <script>
+    document.getElementById("closeSplash").addEventListener("click", () => {
+      document.getElementById("splashScreen").style.display = "none";
+    });
+  </script>
 </body>
+
+
 
 </html>

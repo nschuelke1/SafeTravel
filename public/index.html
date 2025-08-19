@@ -1,14 +1,30 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Safe Travel</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
-  <h1>Safe Travel</h1>
-  <div>
+  <!-- Splash Screen -->
+  <div id="splashScreen">
+    <div id="appDescription">
+      <p>
+        Welcome to <b>Safe Travel</b>, your go-to tool for reporting and viewing road hazards in real-time.
+        Help fellow travelers by submitting incidents like traffic backups, police presence, broken-down vehicles, or objects in the road.
+        Stay safe and informed! Your incident will disappear after 20 minutes, ensuring the map remains current.
+      </p>
+      <button id="closeSplash">Enter Map</button>
+    </div>
+  </div>
+
+  <!-- Map Container -->
+  <div id="mapDiv"></div>
+
+  <!-- Floating Form Panel -->
+  <div id="formPanel">
     <form id="eventForm">
       <label for="eventType">Event Type:</label>
       <select id="eventType">
@@ -17,38 +33,23 @@
         <option value="police">Police Presence</option>
         <option value="object">Object in Road</option>
       </select>
+
       <textarea id="eventDescription" placeholder="Describe the event"></textarea>
-
-      <!-- Hidden inputs for latitude/longitude to ensure form access -->
-      <input type="hidden" id="latitude">
-      <input type="hidden" id="longitude">
-
+      <input type="hidden" id="latitude" />
+      <input type="hidden" id="longitude" />
       <button type="submit">Submit</button>
     </form>
-  <div>
-
- 
-  <div id="splashScreen">
-  <div id="appDescription">
-    <p>
-      Welcome to <b>Safe Travel</b>, your go-to tool for reporting and viewing road hazards in real-time.
-      Help fellow travelers by submitting incidents like traffic backups, police presence, broken-down vehicles, or objects in the road.
-      Stay safe and informed! Your incident will disappear after 20 minutes, ensuring the map remains current.
-    </p>
-    <button id="closeSplash">Enter Map</button>
   </div>
-</div>
 
-  <div id="mapDiv" style="width: 100%; height: 70vh;"></div>
-
-    <div id="legend">
+  <!-- Legend -->
+  <div id="legend">
     <span style="color: orange;">● Traffic</span>
     <span style="color: blue;">● Vehicle</span>
     <span style="color: red;">● Police</span>
     <span style="color: green;">● Object</span>
   </div>
 
-
+  <!-- Scripts -->
   <script src="https://js.arcgis.com/4.26/"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
   <script src="main.js"></script>
@@ -58,7 +59,4 @@
     });
   </script>
 </body>
-
-
-
 </html>
